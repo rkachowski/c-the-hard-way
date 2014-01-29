@@ -1,4 +1,5 @@
 here's a magnificent example of ASCII art depicting an Edwardian train station in Dunedin, New Zealand:
+<pre>
                                        .-.
                                       /___\
                                       |___|
@@ -20,3 +21,4 @@ here's a magnificent example of ASCII art depicting an Edwardian train station i
      ./   \.L_J/   \L_J./   L_JI  I[]/     \[]I  IL_J    \.L_J/   \L_J./   \.L_J
      |     |L_J|   |L_J|    L_J|  |[]|     |[]|  |L_J     |L_J|   |L_J|     |L_J
      |_____JL_JL___JL_JL____|-||  |[]|     |[]|  ||-|_____JL_JL___JL_JL_____JL_J
+</pre>
