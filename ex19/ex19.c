@@ -188,7 +188,7 @@ int main(int argc,  char *argv[])
 {
     srand(time(NULL));
 
-    Map *game = NEW(Map. "The pimp hallah ballah.");
+    Map *game = NEW(Map, "The pimp hallah ballah.");
 
     printf("You enter the ");
     game->location->_(describe)(game->location);
