@@ -1,0 +1,4 @@
+== Criticism
+
+* use of string literals for replacement variables
+* Command_fetch has some duplication 

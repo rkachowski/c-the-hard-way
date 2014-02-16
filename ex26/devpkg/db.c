@@ -6,7 +6,7 @@
 #include "dbg.h"
 #include "bstrlib.h"
 
-static FILE DB_open(const char *path, const char *mode)
+static FILE *DB_open(const char *path, const char *mode)
 {
     return fopen(path, mode);
 }
@@ -45,7 +45,7 @@ int DB_update(const char *url)
 
     FILE *db = DB_open(DB_FILE, "a+");
     check(db, "Couldn't open db %s", DB_FILE);
-    bstring *line = bfromcstr(url);
+    bstring line = bfromcstr(url);
     bconchar(line, '\n');
     int rc = fwrite(line->data, blength(line), 1, db);
 
@@ -88,9 +88,9 @@ int DB_init()
 
     if(access(DB_DIR, W_OK | X_OK) == -1){
         //need to make directory
-        apr_status_c rc = apr_dir_make_recursive(DB_DIR,
-                APR_UREAD | APR_UWRITE | APR_EXECUTE |
-                 APR_GREAD | APR_GWRITE | APR_EXECUTE, p );
+        apr_status_t rc = apr_dir_make_recursive(DB_DIR,
+                APR_UREAD | APR_UWRITE | APR_UEXECUTE |
+                 APR_GREAD | APR_GWRITE | APR_UEXECUTE, p );
         check(rc == APR_SUCCESS, "Failed to create directory %s", DB_DIR);
     }
 

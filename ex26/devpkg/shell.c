@@ -35,17 +35,17 @@ int Shell_exec(Shell template, ...)
 
     //extra credit aw ye
     check(replaced_vars == template.required_vars, "Expected to replace %d vars, did %d instead",
-            required_vars, replaced_vars);
+            template.required_vars, replaced_vars);
 
-    rc = Shell_run(p, &template);
-    apr_pool_destroy(p);
+    rc = Shell_run(pool, &template);
+    apr_pool_destroy(pool);
     va_end(argp);
 
     return rc;
 
 error:
-    if(p){
-        apr_pool_destroy(p);
+    if(pool){
+        apr_pool_destroy(pool);
     }
 
     return rc;
@@ -73,11 +73,11 @@ int Shell_run(apr_pool_t *p, Shell *cmd)
     rv = apr_proc_create(&newproc, cmd->exe, cmd->args, NULL, attr, p);
     check(rv == APR_SUCCESS, "Failed to run command");
 
-    rv = apr_proc_wait(&newproc, &cmd->exit_code, &cmd->exit_why, APR_WAIT);
+    rv = apr_proc_wait(&newproc, &cmd->exit_code, &cmd->why, APR_WAIT);
     check(rv == APR_CHILD_DONE, "Failed to wait");
 
     check(cmd->exit_code == 0, "%s failed to exit correctly", cmd->exe);
-    check(cmd->exit_why == APR_PROC_EXIT,  "%s was killed or crashed.", cmd->exe);
+    check(cmd->why == APR_PROC_EXIT,  "%s was killed or crashed.", cmd->exe);
 
     return 0;
 

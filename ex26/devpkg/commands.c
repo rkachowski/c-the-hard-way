@@ -104,7 +104,7 @@ int Command_build(apr_pool_t *p, const char *url, const char *configure_opts, co
 
     if(access(CONFIG_SCRIPT, X_OK) == 0){
         log_info("Has a configuration script, running it..");
-        rc = Shell_exec(CONFIG_SH, "OPTS", configure_opts, NULL);
+        rc = Shell_exec(CONFIGURE_SH, "OPTS", configure_opts, NULL);
         check(rc == 0, "Failed to configure.");
     }
 
