@@ -24,7 +24,8 @@ $(TARGET): build $(OBJECTS)
 $(SO_TARGET): $(TARGET) $(OBJECTS)
 	$(CC) -shared -0 $@ $(OBJECTS)
 
-build: @mkdir -p build
+build: 
+	@mkdir -p build
 	@mkdir -p bin
 
 .PHONY: tests
@@ -38,15 +39,16 @@ valgrind:
 clean:
 	rm -fr build $(OBJECTS) $(TESTS)
 	rm -f tests/tests.log
-	find . -name '*.gc*' -exec rm {} \;
-	rm -fr find . -name "*.dSYM" -print
+	find . -name "*.gc*" -exec rm {} \;
+	rm -fr `find . -name "*.dSYM" -print`
 
 install: all
 	install -d $(DESTDIR)/$(PREFIX)/lib
 	install $(TARGET) $(DESTDIR)/$(PREFIX)/lib
 
 BADFUNCS='[^_.>a-zA-Z0-9](str(n?cpy|n?cat|xfrm|n?dup|str|pbrk|tok|_)|stpn?cpy|a?sn?printf|byte_)'
-check: @echo Files with potentially bad functions
+check: 
+	@echo Files with potentially bad functions
 	@egrep $(BADFUNCS) $(SOURCES) || true
 
 
