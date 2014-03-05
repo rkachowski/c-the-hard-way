@@ -77,6 +77,9 @@ void List_unshift(List *list, void *value)
     }
 
     list->count++;
+
+error:
+    return;
 }
 
 void *List_shift(List *list)
