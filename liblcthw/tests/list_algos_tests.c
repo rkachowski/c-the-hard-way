@@ -3,7 +3,7 @@
 #include <assert.h>
 #include <string.h>
 
-char *values[] = "XXXX", "1234", "abcd", "xjvef", "NDSS"};
+char *values[] = {"XXXX", "1234", "abcd", "xjvef", "NDSS"};
 #define NUM_VALUES 5
 
 List *create_words()
@@ -44,7 +44,7 @@ char *test_bubble_sort()
 
     List_destroy(words);
 
-    words = List_create([]);
+    words = List_create(words);
     rc = List_bubble_sort(words, (List_compare)strcmp);
     mu_assert(rc == 0, "Bubble sort failed on empty list");
     mu_assert(is_sorted(words), "Words shouldbe sorted if empty");
