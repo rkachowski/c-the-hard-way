@@ -16,7 +16,6 @@ all: $(TARGET) $(SO_TARGET) tests
 dev: CFLAGS=-g -Wall -Isrc -Wall -Wextra $(OPTFLAGS)
 dev: all
 
-$(TARGET): CFLAGS += -fPIX
 $(TARGET): build $(OBJECTS)
 	ar rcs $@ $(OBJECTS)
 	ranlib $@

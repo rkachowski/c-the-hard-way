@@ -98,7 +98,7 @@ char *test_push_pop()
         int *val = DArray_pop(array);
         mu_assert(val != NULL, "Shouldn't get a NULL");
         mu_assert(*val == i *333, "Wrong value");
-        DArray_free(val)
+        DArray_free(val);
     }
 
     return NULL;
