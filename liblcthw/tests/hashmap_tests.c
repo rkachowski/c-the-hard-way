@@ -55,12 +55,12 @@ char *test_get_set()
 
     rc = Hashmap_set(map, &test2, &expect2);
     mu_assert(rc == 0, "Failed to set test2");
-    bstring result = Hashmap_get(map, &test2);
+    result = Hashmap_get(map, &test2);
     mu_assert(result == &expect2, "Wrong value for test2");
 
     rc = Hashmap_set(map, &test3, &expect3);
     mu_assert(rc == 0, "Failed to set test3");
-    bstring result = Hashmap_get(map, &test3);
+    result = Hashmap_get(map, &test3);
     mu_assert(result == &expect3, "Wrong value for test3");
 
     return NULL;

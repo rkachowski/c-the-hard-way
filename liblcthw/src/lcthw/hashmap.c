@@ -189,7 +189,7 @@ void *Hashmap_delete(Hashmap *map, void *key)
 
     HashmapNode *node = DArray_get(bucket, i);
     void *data = node->data;
-    free(data);
+    free(node);
 
     HashmapNode *ending = DArray_pop(bucket);
 
