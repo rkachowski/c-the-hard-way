@@ -33,7 +33,7 @@ double Stats_mean(Stats *st)
 
 double Stats_stddev(Stats *st)
 {
-    return sqrt( (st->sumsq * st->sum / st->) / (st->n -1) );
+    return sqrt( (st->sumsq - (st->sum * st->sum / st->n)) / (st->n -1) );
 }
 
 void Stats_sample(Stats *st, double s)
