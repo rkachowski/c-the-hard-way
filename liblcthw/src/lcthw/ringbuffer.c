@@ -68,15 +68,15 @@ error:
 
 bstring RingBuffer_gets(RingBuffer *buffer, int amount)
 {
-    check(amount > 0, "Need more than 0 for gets, you gave : %d". amount);
-    check_debug(amound <= RingBuffer_available_data(buffer),
+    check(amount > 0, "Need more than 0 for gets, you gave : %d.", amount);
+    check_debug(amount <= RingBuffer_available_data(buffer),
             "Not enough in the buffer.");
 
     bstring result = blk2bstr(RingBuffer_starts_at(buffer), amount);
     check(result != NULL, "Failed to create gets result.");
     check(blength(result) == amount, "Wrong result length.");
 
-    RingBuffer_commit_read(buffer,amound);
+    RingBuffer_commit_read(buffer,amount);
     assert(RingBuffer_available_data(buffer) >= 0 && "Error in read commit.");
 
     return result;

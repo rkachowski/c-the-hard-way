@@ -14,7 +14,6 @@ RingBuffer *RingBuffer_create(int length);
 
 void RingBuffer_destroy(RingBuffer *buffer);
 
-int RingBuffer_create(RingBuffer *buffer);
 
 int RingBuffer_read(RingBuffer *buffer, char *target, int amount);
 
