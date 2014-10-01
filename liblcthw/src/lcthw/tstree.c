@@ -26,7 +26,7 @@ static inline TSTree *TSTree_insert_base(TSTree *root, TSTree *node, const char 
             node->value = value;
         }
     } else {
-        node->high TSTree_insert_base(root, node->high, key, len, value);
+        node->high = TSTree_insert_base(root, node->high, key, len, value);
     }
 
     return node;
