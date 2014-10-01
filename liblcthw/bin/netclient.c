@@ -125,7 +125,7 @@ int main(int argc, char *argv[])
         check(rc >=0, "select failed");
 
         if(FD_ISSET(0, &readmask)) {
-            rc = read_some(in_rb, 0, 0);
+            rc = read_some(in_rb, STDIN_FILENO, 0);
             check_debug(rc != -1, "Failed to read from stdin.");
         }
 
@@ -135,7 +135,7 @@ int main(int argc, char *argv[])
         }
 
         while(!RingBuffer_empty(sock_rb)) {
-            rc = write_some(sock_rb, 1, 0);
+            rc = write_some(sock_rb, STDOUT_FILENO, 0);
             check_debug(rc != -1, "failed to write to stdout.");
         }
 
