@@ -11,10 +11,15 @@ TESTS=$(patsubst %.c,%,$(TEST_SRC))
 TARGET=build/liblcthw.a
 SO_TARGET=$(patsubst %.a,%.so,$(TARGET))
 
-all: $(TARGET) $(SO_TARGET) tests
+PROGRAMS_SRC=$(wildcard bin/*.c)
+PROGRAMS=$(patsubst %.c, %, $(PROGRAMS_SRC))
+
+all: $(TARGET) $(SO_TARGET) tests $(PROGRAMS)
 
 dev: CFLAGS=-g -Wall -Isrc -Wall -Wextra $(OPTFLAGS)
 dev: all
+
+$(PROGRAMS): CFLAGS += $(TARGET)
 
 $(TARGET): build $(OBJECTS)
 	ar rcs $@ $(OBJECTS)
@@ -36,7 +41,7 @@ valgrind:
 	VALGRIND="valgrind --log-file=/tmp/valgrind-%p.log" $(MAKE)
 
 clean:
-	rm -fr build $(OBJECTS) $(TESTS)
+	rm -fr build $(OBJECTS) $(TESTS) $(PROGRAMS)
 	rm -f tests/tests.log
 	find . -name "*.gc*" -exec rm {} \;
 	rm -fr `find . -name "*.dSYM" -print`
