@@ -32,16 +32,16 @@ rule ".o" => ".c" do |t|
     execute "cc #{CFLAGS} -c #{t.source} -o #{t.name}"
 end
 
-TESTS.each do |f| 
+TESTS.each do |f|
     file f => f.ext("c") do |t|
         execute "cc #{CFLAGS} #{TARGET} #{t.source} -o #{t.name}"
     end
 end
 task :tests => [TARGET, *TESTS] do
-    puts "now run those suckers"
+    execute "sh ./tests/runtests.sh"
 end
 
 def execute(cmd)
     puts(cmd)
-    `#{cmd}`
+    system(cmd, out: $stdout)
 end
