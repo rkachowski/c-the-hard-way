@@ -1,4 +1,5 @@
 include Rake
+
 CFLAGS="-g -O2 -Wall -Wextra -Isrc -rdynamic -DNDEBUG"
 
 SOURCES=FileList.new "src/**/*.c","src/*.c"
@@ -24,13 +25,18 @@ task TARGET => ["build", *OBJECTS] do |t|
 end
 
 task SO_TARGET => [TARGET, *OBJECTS] do
-    print "sotarget"
+    puts "sotarget"
 end
 
 rule ".o" => ".c" do |t|
-    `cc -c #{t.source} -o #{t.name} #{CFLAGS}`
+    execute "cc -c #{t.source} -o #{t.name} #{CFLAGS}"
 end
 
 task :tests do
-    print "Tests"
+    puts "Tests"
+end
+
+def execute(cmd)
+    puts(cmd)
+    `#{cmd}`
 end
