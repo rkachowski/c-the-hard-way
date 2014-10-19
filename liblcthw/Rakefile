@@ -20,20 +20,25 @@ directory "bin"
 task :default => [TARGET, SO_TARGET, :tests]#, PROGRAMS]
 
 task TARGET => ["build", *OBJECTS] do |t|
-    `ar rcs #{t} #{OBJECTS}`
-    `ranlib #{t}`
+    execute "ar rcs #{t} #{OBJECTS}"
+    execute "ranlib #{t}"
 end
 
-task SO_TARGET => [TARGET, *OBJECTS] do
-    puts "sotarget"
+task SO_TARGET => [TARGET, *OBJECTS] do |t|
+    execute "cc -shared -o #{t} #{OBJECTS}"
 end
 
 rule ".o" => ".c" do |t|
-    execute "cc -c #{t.source} -o #{t.name} #{CFLAGS}"
+    execute "cc #{CFLAGS} -c #{t.source} -o #{t.name}"
 end
 
-task :tests do
-    puts "Tests"
+TESTS.each do |f| 
+    file f => f.ext("c") do |t|
+        execute "cc #{CFLAGS} #{TARGET} #{t.source} -o #{t.name}"
+    end
+end
+task :tests => [TARGET, *TESTS] do
+    puts "now run those suckers"
 end
 
 def execute(cmd)
