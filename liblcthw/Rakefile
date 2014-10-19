@@ -1,0 +1,36 @@
+include Rake
+CFLAGS="-g -O2 -Wall -Wextra -Isrc -rdynamic -DNDEBUG"
+
+SOURCES=FileList.new "src/**/*.c","src/*.c"
+OBJECTS=SOURCES.ext "o"
+
+TESTS_SRC=FileList.new("tests/*_tests.c")
+TESTS=TESTS_SRC.ext ''
+
+TARGET="build/liblcthw.a"
+SO_TARGET=TARGET.ext "so"
+
+PROGRAMS_SRC=FileList.new "bin/*.c"
+PROGRAMS=PROGRAMS_SRC.ext ""
+
+directory "build"
+directory "bin"
+
+task :default => [TARGET, SO_TARGET, :tests]#, PROGRAMS]
+
+task TARGET => ["build", *OBJECTS] do |t|
+    `ar rcs #{t} #{OBJECTS}`
+    `ranlib #{t}`
+end
+
+task SO_TARGET => [TARGET, *OBJECTS] do
+    print "sotarget"
+end
+
+rule ".o" => ".c" do |t|
+    `cc -c #{t.source} -o #{t.name} #{CFLAGS}`
+end
+
+task :tests do
+    print "Tests"
+end
