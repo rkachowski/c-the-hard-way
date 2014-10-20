@@ -5,8 +5,7 @@ CFLAGS="-g -O2 -Wall -Wextra -Isrc -rdynamic -DNDEBUG"
 SOURCES=FileList.new "src/**/*.c","src/*.c"
 OBJECTS=SOURCES.ext "o"
 
-TESTS_SRC=FileList.new("tests/*_tests.c")
-TESTS=TESTS_SRC.ext ''
+TESTS=FileList.new("tests/*_tests.c").ext ''
 
 TARGET="build/liblcthw.a"
 SO_TARGET=TARGET.ext "so"
@@ -37,6 +36,7 @@ TESTS.each do |f|
         execute "cc #{CFLAGS} #{TARGET} #{t.source} -o #{t.name}"
     end
 end
+
 task :tests => [TARGET, *TESTS] do
     execute "sh ./tests/runtests.sh"
 end
