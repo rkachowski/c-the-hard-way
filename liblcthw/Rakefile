@@ -36,8 +36,11 @@ directory "build"
 directory "bin"
 
 task :default => :all
+
+desc "Build everything and run tests."
 task :all => [TARGET, SO_TARGET, :tests, *PROGRAMS]
 
+desc "Install library."
 task :install => :all do
     install_dir = File.join PREFIX, "lib"
 
@@ -59,13 +62,15 @@ TESTS.concat(PROGRAMS).each do |f|
     task.extra_flags = [TARGET] 
 end
 
+desc "Run tests"
 task :tests => [TARGET, *TESTS] do
     execute "sh ./tests/runtests.sh"
 end
 
+desc "Run tests under valgrind."
 task :valgrind do
     BUILD_ENV["VALGRIND"] = "valgrind --log-file=/tmp/valgrind-%p.log"
-    Rake::Task["all"].invoke
+    Rake::Task["tests"].invoke
 end
 
 rule ".o" => ".c" do |t|
