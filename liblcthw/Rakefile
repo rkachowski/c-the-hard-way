@@ -18,8 +18,8 @@ OBJECTS=SOURCES.ext "o"
 
 TESTS=Rake::FileList.new("tests/*_tests.c").ext ''
 
-TARGET="build/liblcthw.a"
-SO_TARGET=TARGET.ext "so"
+TARGET=file "build/liblcthw.a"
+SO_TARGET=TARGET.name.ext "so"
 
 PROGRAMS_SRC=Rake::FileList.new "bin/*.c"
 PROGRAMS=PROGRAMS_SRC.ext ""
