@@ -11,7 +11,7 @@ module Rake
 end
 
 CFLAGS="-g -O2 -Wall -Wextra -Isrc -rdynamic -DNDEBUG"
-PREFIX="/usr/local/lib"
+PREFIX="/usr/local"
 
 SOURCES=Rake::FileList.new "src/**/*.c","src/*.c"
 OBJECTS=SOURCES.ext "o"
