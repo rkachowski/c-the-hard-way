@@ -2,29 +2,32 @@ require 'rake/clean'
 
 module Rake
     class Task
-        attr_accessor :extra_flags
-        def extra_flags
-            @extra_flags ||= []
-            @extra_flags
+        attr_accessor :task_flags
+        def task_flags
+            @task_flags ||= []
+            @task_flags
         end
     end
 end
 
+### configuration
+
 CFLAGS="-g -O2 -Wall -Wextra -Isrc -rdynamic -DNDEBUG"
 PREFIX="/usr/local"
+BUILD_ENV={}
+
+### sources
 
 SOURCES=Rake::FileList.new "src/**/*.c","src/*.c"
 OBJECTS=SOURCES.ext "o"
-
 TESTS=Rake::FileList.new("tests/*_tests.c").ext ''
+PROGRAMS=Rake::FileList.new("bin/*.c").ext ""
+
+
+### tasks
 
 TARGET=file "build/liblcthw.a"
 SO_TARGET=TARGET.name.ext "so"
-
-PROGRAMS_SRC=Rake::FileList.new "bin/*.c"
-PROGRAMS=PROGRAMS_SRC.ext ""
-
-BUILD_ENV={}
 
 CLEAN.include(OBJECTS, TESTS, PROGRAMS)
 CLEAN.include("tests/tests.log")
@@ -33,7 +36,6 @@ CLEAN.include("**/*.dSYM")
 CLOBBER.include("build")
 
 directory "build"
-directory "bin"
 
 task :default => :all
 
@@ -48,18 +50,18 @@ task :install => :all do
     execute "install #{TARGET} #{install_dir}"
 end
 
-task TARGET => ["build", *OBJECTS] do |t|
+file TARGET => ["build", *OBJECTS] do |t|
     execute "ar rcs #{t} #{OBJECTS}"
     execute "ranlib #{t}"
 end
 
-task SO_TARGET => [TARGET, *OBJECTS] do |t|
+file SO_TARGET => [TARGET, *OBJECTS] do |t|
     execute "cc -shared -o #{t} #{OBJECTS}"
 end
 
 TESTS.concat(PROGRAMS).each do |f|
     task = file f
-    task.extra_flags = [TARGET] 
+    task.task_flags = [TARGET] 
 end
 
 desc "Run tests"
@@ -73,6 +75,8 @@ task :valgrind do
     Rake::Task["tests"].invoke
 end
 
+### make compatibility rules
+
 rule ".o" => ".c" do |t|
     execute "cc #{CFLAGS} -c #{t.source} -o #{t.name}"
 end
@@ -81,7 +85,7 @@ rule /^((?!\w*\.\w*).)*$/ => ".c" do |t|
     deps = t.prerequisites
     objects = deps.select { |d| d.pathmap == ".o" }
 
-    execute "cc #{CFLAGS} #{t.extra_flags.join ' '} #{t.source} #{objects.join ' '} -o #{t.name}"
+    execute "cc #{CFLAGS} #{t.task_flags.join ' '} #{t.source} #{objects.join ' '} -o #{t.name}"
 end
 
 def execute(cmd)
