@@ -1,22 +1,49 @@
-include Rake
+require 'rake/clean'
+
+module Rake
+    class Task
+        attr_accessor :extra_flags
+        def extra_flags
+            @extra_flags ||= []
+            @extra_flags
+        end
+    end
+end
 
 CFLAGS="-g -O2 -Wall -Wextra -Isrc -rdynamic -DNDEBUG"
+PREFIX="/usr/local/lib"
 
-SOURCES=FileList.new "src/**/*.c","src/*.c"
+SOURCES=Rake::FileList.new "src/**/*.c","src/*.c"
 OBJECTS=SOURCES.ext "o"
 
-TESTS=FileList.new("tests/*_tests.c").ext ''
+TESTS=Rake::FileList.new("tests/*_tests.c").ext ''
 
 TARGET="build/liblcthw.a"
 SO_TARGET=TARGET.ext "so"
 
-PROGRAMS_SRC=FileList.new "bin/*.c"
+PROGRAMS_SRC=Rake::FileList.new "bin/*.c"
 PROGRAMS=PROGRAMS_SRC.ext ""
+
+BUILD_ENV={}
+
+CLEAN.include(OBJECTS, TESTS, PROGRAMS)
+CLEAN.include("tests/tests.log")
+CLEAN.include("**/*.dSYM")
+
+CLOBBER.include("build")
 
 directory "build"
 directory "bin"
 
-task :default => [TARGET, SO_TARGET, :tests]#, PROGRAMS]
+task :default => :all
+task :all => [TARGET, SO_TARGET, :tests, *PROGRAMS]
+
+task :install => :all do
+    install_dir = File.join PREFIX, "lib"
+
+    execute "install -d #{install_dir}"
+    execute "install #{TARGET} #{install_dir}"
+end
 
 task TARGET => ["build", *OBJECTS] do |t|
     execute "ar rcs #{t} #{OBJECTS}"
@@ -27,21 +54,32 @@ task SO_TARGET => [TARGET, *OBJECTS] do |t|
     execute "cc -shared -o #{t} #{OBJECTS}"
 end
 
-rule ".o" => ".c" do |t|
-    execute "cc #{CFLAGS} -c #{t.source} -o #{t.name}"
-end
-
-TESTS.each do |f|
-    file f => f.ext("c") do |t|
-        execute "cc #{CFLAGS} #{TARGET} #{t.source} -o #{t.name}"
-    end
+TESTS.concat(PROGRAMS).each do |f|
+    task = file f
+    task.extra_flags = [TARGET] 
 end
 
 task :tests => [TARGET, *TESTS] do
     execute "sh ./tests/runtests.sh"
 end
 
+task :valgrind do
+    BUILD_ENV["VALGRIND"] = "valgrind --log-file=/tmp/valgrind-%p.log"
+    Rake::Task["all"].invoke
+end
+
+rule ".o" => ".c" do |t|
+    execute "cc #{CFLAGS} -c #{t.source} -o #{t.name}"
+end
+
+rule /^((?!\w*\.\w*).)*$/ => ".c" do |t|
+    deps = t.prerequisites
+    objects = deps.select { |d| d.pathmap == ".o" }
+
+    execute "cc #{CFLAGS} #{t.extra_flags.join ' '} #{t.source} #{objects.join ' '} -o #{t.name}"
+end
+
 def execute(cmd)
     puts(cmd)
-    system(cmd, out: $stdout)
+    system(BUILD_ENV, cmd, out: $stdout)
 end
